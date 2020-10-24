@@ -1,0 +1,17 @@
+table {
+    white-space: nowrap;
+    text-align: left;
+    table-layout: fixed;
+}
+td, th {
+    border: 1px solid black;
+    padding: 0.25em;
+    height: 1.25em; /*so empty fields have the same height as fields with text*/
+}
+.find_replace_table_checkbox_class { /*to easily find all these checkbox elements to iterate through*/
+    
+}
+canvas { /*overides the default behavior of a rounded rectangle border appearing when the canvas is clicked on*/
+    border: 2px solid black;
+    border-radius: 5px;
+}

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <meta charset="UTF-8">
+    <title>BEM Instructionals</title>
+    <link rel="stylesheet" href="bem_style.css">
+    
+    <script src="premade_objects.js"> //object_count_json, idd_json, object_fields_units_json, reference_class_name_json, reference_object_field_json</script>
+    <script src="functions_and_setup.js"></script>
+    <script type="text/javascript">
+        var top_vh = 30;
+        var bottom_vh = 30;
+        var geometry_vw = 30;
+        var geometry_vh = 30;
+        /*
+        var url_parameters = new URLSearchParams(window.location.search);
+        var top_vh = url_parameters.get('top_height');
+        var bottom_vh = url_parameters.get('bottom_height');
+        var geometry_vw = url_parameters.get('geometry_width');
+        var geometry_vh = url_parameters.get('geometry_height');
+        
+        if(top_vh == null || bottom_vh == null || geometry_vw == null || geometry_vh == null) {
+            window.location.assign("https://beminstructionals.wiki/?top_height=30&bottom_height=60&geometry_width=70&geometry_height=99");
+        }
+        */
+        
+        var uploaded_file_name = '';
+        var idf_array = [];
+    </script>
+</head>
+<body style="margin: 0px;" spellcheck="false"> <!--removes the whitespace border around the entire page, which is more space but also prevents html elements from moving in the margin while scrolling-->
+<button onclick="ShowPage(0)">IDF Editor</button>
+<button onclick="open_geometry_tab()">Geometry Viewer</button>
+<button onclick="ShowPage(3)">Tutorials</button>
+<button onclick="ShowPage(4)">Licenses Page</button>
+<button onclick="ShowPage(5)">FAQ</button>
+<img src="BEM_instructionals_logo.png" style="height: 5em; float: right;"><br>
+Upload IDF: <input type="file" accept=".idf" onchange="process_uploaded_file(this)">
+<button onclick="download_IDF()">Download IDF</button>
+
+<div id="IDF Editor div" style="display:block;">
+    <button onclick="new_object_button()">New Object</button>
+    <button id="duplicate_objects_button_id" onclick="duplicate_objects_button()">Duplicate Objects</button>
+    <button id="delete_objects_button_id" onclick="delete_objects_button()">Delete Objects</button>
+    <button onclick="copy_objects_button()">Copy</button>
+    <button onclick="paste_objects_button()">Paste</button>
+    <button id="undo_button_id" onclick="undo_button()" disabled>Undo</button>
+    <button id="redo_button_id" onclick="redo_button()" disabled>Redo</button><br>
+    <div>
+        <button onclick="toggle_unused_objects()">Toggle Unused Objects</button>
+        <input type="text" id="filter_objects_input" oninput="filter_objects()" placeholder="Filter Objects" style="width:12vw">
+        <button onclick="show_find_replace_div()">Find/Replace</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;Documentation Source: <button onclick="documentation_source_button()">IDF Editor/IO Ref</button>
+        <a href="https://energyplus.net/sites/all/modules/custom/nrel_custom/pdfs/pdfs_v9.3.0/InputOutputReference.pdf" target="_blank">IO Ref PDF</a>
+        <a href="https://energyplus.net/documentation" target="_blank">All Documentation</a>
+        &nbsp;&nbsp;&nbsp;&nbsp;Show All Fields:<input id="show_all_object_fields_checkbox_id" type="checkbox" onclick="show_all_object_fields_checkbox()">(slow)
+    </div>
+    
+    <div id="top div" style="width:100%; height:0vh;"> <!--height set from URL parameters-->
+        <div id="IDF Editor class list div" style="overflow:scroll; float:left; height:100%; width:25.5%; white-space: nowrap;">
+<script src="class_list.js"></script>
+        </div>
+        <div id="Documentation IDD div" style="float:right; height:100%; width:74%; overflow-y: scroll;  display: block;"></div>
+        <iframe id="Documentation IO Ref iframe" src="InputOutputReference.pdf#view=FitH" style="float:right; height:100%; width:74%; display: none;"></iframe>
+    </div>
+</div>
+
+<div id="IDF table div" style="overflow: scroll; width: 100%; height: 0vh;"></div> <!--height set from URL parameters-->
+    
+<div id="find replace div" style="position: absolute; left: 10%; top: 10%; width: 80%; height: 80%; z-index: 1; background-color: white; border: 1px solid black; display: none; overflow-y: scroll;">
+    <input type="text" id="find_input" placeholder="Find Text" style="width:50%">
+    <button onclick="find_button()">Find</button>
+    Match Entire Field Value Contents<input id="match_entire_field_value_contents_checkbox" type="checkbox">
+    <button onclick="show_find_replace_div()" style="float: right;">Exit</button>
+    
+    <input type="text" id="replace_input" placeholder="Replace With" style="width:50%">
+    <button onclick="replace_button()">Replace</button>
+    
+    <table id="find replace table" style="border-collapse: collapse; border: 1px solid black; table-layout: fixed;">
+        <tr style="background-color: LightGray;">
+            <th><input type="checkbox"></th>
+            <th>Object Type</th>
+            <th>Name(First Field)</th>
+            <th>Field</th>
+            <th>Value</th>
+            <th></th>
+        </tr>
+    </table>
+</div>
+
+<div id="Tutorials div" style="display:none;">
+    <h1>Tutorials</h1>
+</div>
+
+<div id="Licenses Page div" style="display:none;">
+    <h1>Licenses Page</h1>
+    <p id="copyright p"></p> <!-- filled in by javascript -->
+    <p>Original content is subject to copyright and may not be used without permission. Derivative works inherit the license of the underlying work if required by the license of the underlying work.</p>
+    
+    <p><a href="https://unmethours.com/">Unmet Hours</a> content is available under a Cretive Commons license.</p>
+    <blockquote>
+    Site design and logo: Copyright &copy; 2015 Big Ladder Software LLC. All rights reserved.<br>
+    The Unmet Hours and Big Ladder names and logos are trademarks of Big Ladder Software LLC.<br>
+    User contributions licensed under the <a href="http://creativecommons.org/licenses/by-sa/3.0/legalcode">Creative Commons Attribution Share Alike 3.0 License</a>. <a href="http://creativecommons.org/licenses/by-sa/3.0/legalcode"><img src="UnmetHours cc-by-sa image.png" alt="UnmetHours cc-by-sa image"></a><br>
+    </blockquote>
+    
+    <p>EnergyPlus version 9.3 is available under a BSD-3-like license.</p>
+    <blockquote>
+    EnergyPlus, Copyright (c) 1996-2020, The Board of Trustees of the University of Illinois, The Regents of the University of California, through Lawrence Berkeley National Laboratory (subject to receipt of any required approvals from the U.S. Dept. of Energy), Oak Ridge National Laboratory, managed by UT-Battelle, Alliance for Sustainable Energy, LLC, and other contributors. All rights reserved.<br>
+    <br>
+    NOTICE: This Software was developed under funding from the U.S. Department of Energy and the U.S. Government consequently retains certain rights. As such, the U.S. Government has been granted for itself and others acting on its behalf a paid-up, nonexclusive, irrevocable, worldwide license in the Software to reproduce, distribute copies to the public, prepare derivative works, and perform publicly and display publicly, and to permit others to do so.<br>
+    <br>
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<br>
+    <br>
+    (1) Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.<br>
+    <br>
+    (2) Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.<br>
+    <br>
+    (3) Neither the name of the University of California, Lawrence Berkeley National Laboratory, the University of Illinois, U.S. Dept. of Energy nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.<br>
+    <br>
+    (4) Use of EnergyPlus(TM) Name. If Licensee (i) distributes the software in stand-alone form without changes from the version obtained under this License, or (ii) Licensee makes a reference solely to the software portion of its product, Licensee must refer to the software as "EnergyPlus version X" software, where "X" is the version number Licensee obtained under this License and may not use a different name for the software. Except as specifically required in this Section (4), Licensee shall not use in a company name, a product name, in advertising, publicity, or other promotional activities any name, trade name, trademark, logo, or other designation of "EnergyPlus", "E+", "e+" or confusingly similar designation, without the U.S. Department of Energy's prior written consent.<br>
+    <br>
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br>
+    </blockquote>
+    
+    <p>OpenStudio Application v1.0.0 is licensed under a BSD 4-Clause open-source license.</p> <!-- Source for license description https://www.openstudio.net/new-future-for-openstudio-application -->
+    <blockquote>
+    OpenStudio(R), Copyright (c) 2008-2019, Alliance for Sustainable Energy, LLC, and other contributors. All rights reserved.<br>
+    <br>
+    Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:<br>
+    <br>
+    (1) Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.<br>
+    <br>
+    (2) Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.<br>
+    <br>
+    (3) Neither the name of the copyright holder nor the names of any contributors may be used to endorse or promote products derived from this software without specific prior written permission from the respective party.<br>
+    <br>
+    (4) Other than as required in clauses (1) and (2), distributions in any form of modifications or other derivative works may not use the "OpenStudio" trademark, "OS", "os", or any other confusingly similar designation without specific prior written permission from Alliance for Sustainable Energy, LLC.<br>
+    <br>
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDER(S) AND ANY CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER(S), ANY CONTRIBUTORS, THE UNITED STATES GOVERNMENT, OR THE UNITED STATES DEPARTMENT OF ENERGY, NOR ANY OF THEIR EMPLOYEES, BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br>
+    </blockquote>
+</div>
+
+<div id="FAQ div" style="display:none; margin: auto; width: 60%;">
+    <h1>Frequently Asked Questions</h1>
+    <h2>Where can I get help?</h2>
+    <p><a href="https://unmethours.com/questions/" target="_blank">UnmetHours.com</a> is an excellent resource. Questions and answers are posted by full time staff, developers, and users on many specific modeling questions. Chances are, you can find what you need there or you can ask your well documented question and get an answer in a day or two.</p>
+    
+    <h2>How do I adjust the IDF Editor page?</h2>
+    <p>That can be done by modifying the <code>top_height=30</code> and <code>bottom_height=60</code> URL parameters, which determine the heights of documentation and table sections as a percentage of the total screen height. Just change the 30 and 60 after <code>top_height=</code> and <code>bottom_height=</code> in the URL to whatever you want.</p>
+    
+    <h2>Why are some objects not displayed in the Geometry?</h2>
+    <p>The short answer is correctly implementing every object type in 3D space was too much work. Most of the objects are too special purpose as well and can be made using a more versatile object.</p>
+    <p>IDF objects that will display in the Geometry are <code>BuildingSurface:Detailed FenestrationSurface:Detailed Shading:Site:Detailed Shading:Building:Detailed Shading:Zone:Detailed Daylighting:ReferencePoint</code> objects.</p>
+    <p>IDF objects that will NOT display in the Geometry are <code>GeometryTransform Wall:Detailed RoofCeiling:Detailed Floor:Detailed Wall:Exterior Wall:Adiabatic Wall:Underground Wall:Interzone Roof Ceiling:Adiabatic Ceiling:Interzone Floor:GroundContact Floor:Adiabatic Floor:Interzone Window Door GlazedDoor Window:Interzone Door:Interzone GlazedDoor:Interzone Shading:Site Shading:Building Shading:Overhang Shading:Overhang:Projection Shading:Fin Shading:Fin:Projection</code> objects.</p>
+    <p>I do think some of the <code>Shading:*</code> objects not currently implemented would be very nice to have, but they are all very complicated to implement because they must take into account the handedness of the vertex ordering, Relative versus World coordinates, referencing multiple object types, et cetera. Some of them also have ambiguous placement, like on a triangular window, placement on slanted surfaces, et cetera. I tried looking in the source code, but I either couldn't find the relevant code or the code was incomprehensible. If anyone wants to take on the Herculean task of reverse engineering how these objects are placed and then modifying the website javascript, be my guest.</p>
+
+    <h2>Why is the Geometry page not working correctly?</h2>
+    <p>This is most likely due to a missing or malformed object in the IDF. Do you have exactly one <code>Building</code> object? Do you have exactly one <code>GlobalGeometryRules</code> object? Are your <code>Zone, ZoneList, BuildingSurface:Detailed, FenestrationSurface:Detailed</code>, et cetera objects formed correctly? Did you mistakently use a <code>Shading:Site:*</code> versus <code>Shading:Building:*</code> object, which use different coordinate systems? Are any of the points in your surfaces not coplanar with the other points? Are you using Relative or World coordinates? Do your <code>Zone</code> objects have the correct origin?</p>
+    <p>A good way to find most of these errors is to simulate your IDF and look in the resulting *.ERR file, which is usually pretty good about pointing out missing or malformed objects. The *.ERR file might specify more <code>Output:*</code> objects to display more verbose output as well.</p>
+    
+    <h2>Why on Earth did you make this?</h2>
+    <p>The real reason was so the misses and I wouldn't figuratively murder each other while being couped up during the pandemic. I also enjoy teaching and remember how steep the learning curve for this stuff was, so making this site and the vidoes that go with it seemed like a good idea.</p>
+    
+    <h2>How do I report a bug?</h2>
+    <p>Thank you for reporting the bug. Please send relevant information, such as screenshots, the IDF, browser, order of operations to cause the error, et cetera to bem.instructionals@gmail.com and I'll do my best. I'll try to fix the bug if it's something I made, but may just pass along the bug on UnmetHours.com or github.com/NREL/EnergyPlus/issues if the bug is from deeper within the software.</p>
+</div>
+
+<script>
+var copyright_year = new Date().getFullYear();
+document.getElementById('copyright p').innerHTML = 'Copyright &copy; ' + copyright_year + ' BEM Instructionals. All rights reserved.';
+
+//global variables used by the functions, mostly representing the state of the IDF gui
+var currently_highligted_object_type = "Version" //default object type highlighted in the class list when the page is opened or a file uploaded
+var documentation_choice = "IDD" //or "IO Ref" to pick what is displayed in the documentation div
+//list of all the object type group names for displaying or hiding when toggling unused objects
+var group_names_array = ["Simulation Parameters","Compliance Objects","Location and Climate","Schedules","Surface Construction Elements","Thermal Zones and Surfaces","Advanced Construction, Surface, Zone Concepts","Detailed Ground Heat Transfer","Room Air Models","Internal Gains","Daylighting","Zone Airflow","Natural Ventilation and Duct Leakage","Exterior Equipment","HVAC Templates","HVAC Design Objects","Zone HVAC Controls and Thermostats","Zone HVAC Forced Air Units","Zone HVAC Radiative/Convective Units","Zone HVAC Air Loop Terminal Units","Zone HVAC Equipment Connections","Fans","Coils","Evaporative Coolers","Humidifiers and Dehumidifiers","Heat Recovery","Unitary Equipment","Variable Refrigerant Flow Equipment","Controllers","Air Distribution","Node-Branch Management","Pumps","Plant-Condenser Flow Control","Non-Zone Equipment","Solar Collectors","Plant Heating and Cooling Equipment","Condenser Equipment and Heat Exchangers","Water Heaters and Thermal Storage","Plant-Condenser Loops","Plant-Condenser Control","Energy Management System (EMS)","External Interface","User Defined HVAC and Plant Component Models","System Availability Managers","Setpoint Managers","Refrigeration","Demand Limiting Controls","Electric Load Center-Generator Specifications","Water Systems","Operational Faults","General Data Entry","Hybrid Model","Performance Curves","Performance Tables","Fluid Properties","Economics","Parametrics","Output Reporting","Python Plugin System"];
+var unused_objects_display = "block"; //or "none" to show or display unused object types and all group names
+var filter_input = document.getElementById('filter_objects_input'); //text field used to filter the object types in the class list not currently hidden
+var maximum_undos = 100; //keeps the number of previous idf_array stored in the undo_array
+var undo_array = []; //each element is an idf_array for a history of changes
+var redo_array = []; //each element is an idf_array saved when using undo
+var undo_notes = []; //descriptions of past operations
+var redo_notes = []; //descriptions of future operations
+var idf_array_note = ['Original Upload'];
+var original_field_value; //used when the cells are changed in the object values table
+
+//set heights of the class list/documentation div and object table div from the URL parameters
+set_IDF_editor_div_heights(top_vh,bottom_vh,geometry_vw,geometry_vh);
+//runs when the page first loads to highlight Version and documentation for the first field name
+object_type_clicked(currently_highligted_object_type);
+
+//triggers class list filter function whenever the contents of the filter object text box changes
+filter_input.addEventListener('keydown', filter_objects_legal_characters);
+//to prompt the user before exiting the page in case they haven't downloaded their IDF yet
+window.onbeforeunload = function(event) {
+    event.returnValue = "Changes you made may not be saved.";
+};
+
+document.addEventListener('focusin', td_focusin_behavior); //for detecting changes to td elements in the objects table
+document.addEventListener('keydown', leave_td_behavior); //for editing the td text in the objects table
+document.addEventListener('focusout', td_focusout_behavior); //for detecting changes to td elements in the objects table
+</script>
+</body>
+</html>

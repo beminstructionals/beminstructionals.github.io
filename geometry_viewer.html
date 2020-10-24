@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <meta charset="UTF-8">
+    <title>Geometry Viewer</title>
+    <link rel="stylesheet" href="bem_style.css">
+    
+    <script src="premade_objects.js"> //object_count_json, idd_json, object_fields_units_json, reference_class_name_json, reference_object_field_json</script>
+    <script src="functions_and_setup.js"></script>
+
+    <!-- for Geometry -->
+    <script src="three.min.js"></script> <!-- base library -->
+    <script src="OrbitControls.js"></script> <!-- allows rotation, zooming, and panning -->
+</head>
+<body style="margin: 0px;" spellcheck="false"> <!--removes the whitespace border around the entire page, which is more space but also prevents html elements from moving in the margin while scrolling-->
+<div id="Geometry Editor div">
+    <div id="canvas div"></div>
+    <div id="geometry controls div">
+        <img src="BEM_instructionals_logo.png" style="height: 5em; float: right;">
+        <div id="geometry error div"></div>
+        <button onclick="apply_geometry_checkboxes()">Apply</button><input type="text" id="shown opacity text box" value="1.00" style="width:2em"><input type="text" id="hidden opacity text box" value="0.00" style="width:2em">Opacity to Checked/Unchecked Surfaces<br>
+        <button onclick="check_uncheck_all(true)">Check</button><button onclick="check_uncheck_all(false)">Uncheck</button> All<!--&nbsp;&nbsp;&nbsp;&nbsp;<input id="Wireframe checkbox" type="checkbox" checked>Wireframe--><br>
+        <input type="text" id="match field contents text box" placeholder="Match Entire Field Value Contents" style="width:40%;">&nbsp;&nbsp;&nbsp;&nbsp;<br><button onclick="check_uncheck_selection(true)">Check</button><button onclick="check_uncheck_selection(false)">Uncheck</button>Current Selection<br>
+        <table style="border-collapse: collapse; border: 1px solid black; float: left;">
+        <tr><td style="background-color: LightGray;"><input id="BuildingSurface:Detailed checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">BuildingSurface:Detailed</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Surface Type checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Surface Type</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Construction Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Construction Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Zone Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Zone Name</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Outside Boundary Condition checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Outside Boundary Condition</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Outside Boundary Condition Object checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Outside Boundary Condition Object</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Sun Exposure checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Sun Exposure</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed Wind Exposure checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Wind Exposure</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="BuildingSurface:Detailed View Factor to Ground checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">View Factor to Ground</td></tr>
+        <tr><td style="background-color: LightGray;"><input id="FenestrationSurface:Detailed checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">FenestrationSurface:Detailed</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Surface Type checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Surface Type</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Construction Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Construction Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Building Surface Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Building Surface Name</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Outside Boundary Condition Object checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Outside Boundary Condition Object</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed View Factor to Ground checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">View Factor to Ground</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Frame and Divider Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Frame and Divider Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="FenestrationSurface:Detailed Multiplier checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Multiplier</td></tr>
+        <tr><td style="background-color: LightGray;"><input id="Shading:Site:Detailed checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Shading:Site:Detailed</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Site:Detailed Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Site:Detailed Transmittance Schedule Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Transmittance Schedule Name</td></tr>
+        <tr><td style="background-color: LightGray;"><input id="Shading:Building:Detailed checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Shading:Building:Detailed</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Building:Detailed Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Building:Detailed Transmittance Schedule Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Transmittance Schedule Name</td></tr>
+        <tr><td style="background-color: LightGray;"><input id="Shading:Zone:Detailed checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Shading:Zone:Detailed</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Zone:Detailed Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Zone:Detailed Base Surface Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Base Surface Name</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="Shading:Zone:Detailed Transmittance Schedule Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Transmittance Schedule Name</td></tr>
+        <tr><td style="background-color: LightGray;"><input id="Daylighting:ReferencePoint checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Daylighting:ReferencePoint</td></tr>
+            <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;<input id="Daylighting:ReferencePoint Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Name</td></tr>
+            <tr><td style="background: whitesmoke;">&nbsp;&nbsp;&nbsp;&nbsp;<input id="Daylighting:ReferencePoint Zone Name checkbox" type="checkbox" onclick="geometry_checkbox(this.id)">Zone Name</td></tr>
+        </table>
+        
+        <div id="selected geometry div" style="display: inline-block;"></div>
+    </div>
+    <br>
+</div>
+
+<script>
+var geometry_vw = sessionStorage.getItem("geometry_vw");
+var geometry_vh = sessionStorage.getItem("geometry_vh");
+document.getElementById('canvas div').style = "width: " + geometry_vw + "vw; height: " + geometry_vh + "vh; float: left;";
+document.getElementById('geometry controls div').style = "width: " + (100-1-geometry_vw) + "vw; height: " + geometry_vh + "vh; float: right; overflow-y: scroll; white-space: nowrap;";
+
+var idf_array = JSON.parse(sessionStorage.getItem("idf_array"));
+
+
+/*
+OBJECTS USED IN GEOMETRY
+Building
+GlobalGeometryRules
+BuildingSurface:Detailed
+FenestrationSurface:Detailed
+Shading:Site:Detailed
+Shading:Building:Detailed
+Shading:Zone:Detailed
+Daylighting:ReferencePoint
+*/
+
+//reported to user under h1
+ignored_object_types = ["GeometryTransform","ZoneGroup","Wall:Detailed","RoofCeiling:Detailed","Floor:Detailed","Wall:Exterior","Wall:Adiabatic","Wall:Underground","Wall:Interzone","Roof","Ceiling:Adiabatic","Ceiling:Interzone","Floor:GroundContact","Floor:Adiabatic","Floor:Interzone","Window","Door","GlazedDoor","Window:Interzone","Door:Interzone","GlazedDoor:Interzone","Shading:Site","Shading:Building","Shading:Overhang","Shading:Overhang:Projection","Shading:Fin","Shading:Fin:Projection"];
+//common colors
+var black_color = 0x000000;
+var white_color = 0xffffff;
+var wall_exterior_color = 0x96834b;
+var wall_interior_color = 0xaca690;
+var floor_exterior_color = 0x5e5e5e;
+var floor_interior_color = 0x8c8c8c;
+var ceiling_roof_exterior_color = 0x703838;
+var ceiling_roof_interior_color = 0x946d6d;
+var shading_site_exterior_color = 0x375b6d;
+var shading_site_interior_color = 0x8999a1;
+var shading_building_exterior_color = 0x533870;
+var shading_building_interior_color = 0x9e95a8;
+var shading_zone_exterior_color = 0x385183;
+var shading_zone_interior_color = 0x8690a4;
+var door_exterior_color = 0x706238;
+var door_interior_color = 0x948a6d;
+//windows are little different since they will have an opacity
+var window_exterior_color = 0x4b8296;
+var window_interior_color = 0x447582;
+var glass_opacity = 0.6 //opaque = 1.0
+//used for the xyz axes, which are red, green, and blue
+var axis_length = 100;
+
+//global variables mostly used by three.js
+var width = geometry_vw/100*window.innerWidth; //get the height and width of the div the canvas will be created in
+var height = geometry_vh/100*window.innerHeight; //formerly three_js_container.clientHeight and clientWidth for the raycaster
+
+/*
+didn't work very well
+//used to capture mouse position, create a line from the camera to mouse position, and determine what object in 3D space was clicked on
+var mouse = new THREE.Vector2();
+var raycaster = new THREE.Raycaster();
+three_js_container.addEventListener('click',onMouseClick,false);
+*/
+
+//setup checkboxes
+var selected_geometry_div = document.getElementById('selected geometry div');
+selected_geometry_div.innerHTML = '';
+for(var geometry_type of ["BuildingSurface:Detailed","FenestrationSurface:Detailed","Shading:Site:Detailed","Shading:Building:Detailed","Shading:Zone:Detailed","Daylighting:ReferencePoint"]) {
+    selected_geometry_div.innerHTML += '<b>' + geometry_type + '</b><br>';
+    for(var subarray of idf_array) {
+        if(subarray[0] == geometry_type) {
+            selected_geometry_div.innerHTML += '<input id="' + geometry_type + ',' + subarray[1] + ' checkbox" type="checkbox" onclick="" checked><span id="' + geometry_type + ',' + subarray[1] + '" onclick="select_surface(this.id)" style="color: black;">' + subarray[1] + '</span><br>';
+        }
+    }
+}
+
+function select_surface(id) {
+    if(document.getElementById(id).style.color == "black") {
+        document.getElementById(id).style.color = "green";
+        for(var child of scene.children) {
+            if(child.type == "Mesh" && child.name == id) {
+                child.userData = {'original color':child.material.color};
+                child.material.color = new THREE.Color(0x00ff00);
+                animate();
+            }
+        }
+    } else {
+        document.getElementById(id).style.color = "black";
+        for(var child of scene.children) {
+            if(child.type == "Mesh" && child.name == id) {
+                child.material.color = child.userData['original color'];
+                child.userData = {};
+                animate();
+            }
+        }
+    }
+}
+
+function geometry_checkbox(checkbox_id) {
+    if(document.getElementById(checkbox_id).checked == true) {
+        var checkbox_id_array = [];
+        if(checkbox_id.includes('BuildingSurface:Detailed')) {
+            checkbox_id_array = ['BuildingSurface:Detailed checkbox','BuildingSurface:Detailed Name checkbox','BuildingSurface:Detailed Surface Type checkbox','BuildingSurface:Detailed Construction Name checkbox','BuildingSurface:Detailed Zone Name checkbox','BuildingSurface:Detailed Outside Boundary Condition checkbox','BuildingSurface:Detailed Outside Boundary Condition Object checkbox','BuildingSurface:Detailed Sun Exposure checkbox','BuildingSurface:Detailed Wind Exposure checkbox','BuildingSurface:Detailed View Factor to Ground checkbox'];
+        } else if(checkbox_id.includes('FenestrationSurface:Detailed')) {
+            checkbox_id_array = ['FenestrationSurface:Detailed checkbox','FenestrationSurface:Detailed Name checkbox','FenestrationSurface:Detailed Surface Type checkbox','FenestrationSurface:Detailed Construction Name checkbox','FenestrationSurface:Detailed Building Surface Name checkbox','FenestrationSurface:Detailed Outside Boundary Condition Object checkbox','FenestrationSurface:Detailed View Factor to Ground checkbox','FenestrationSurface:Detailed Frame and Divider Name checkbox','FenestrationSurface:Detailed Multiplier checkbox'];
+        } else if(checkbox_id.includes('Shading:Site:Detailed')) {
+            checkbox_id_array = ['Shading:Site:Detailed checkbox','Shading:Site:Detailed Name checkbox','Shading:Site:Detailed Transmittance Schedule Name checkbox'];
+        } else if(checkbox_id.includes('Shading:Building:Detailed')) {
+            checkbox_id_array = ['Shading:Building:Detailed checkbox','Shading:Building:Detailed Name checkbox','Shading:Building:Detailed Transmittance Schedule Name checkbox'];
+        } else if(checkbox_id.includes('Shading:Zone:Detailed')) {
+            checkbox_id_array = ['Shading:Zone:Detailed checkbox','Shading:Zone:Detailed Name checkbox','Shading:Zone:Detailed Base Surface Name checkbox','Shading:Zone:Detailed Transmittance Schedule Name checkbox'];
+        } else if(checkbox_id.includes('Daylighting:ReferencePoint')) {
+            checkbox_id_array = ['Daylighting:ReferencePoint checkbox','Daylighting:ReferencePoint Name checkbox','Daylighting:ReferencePoint Zone Name checkbox'];
+        }
+        
+        for(var id of checkbox_id_array) {
+            document.getElementById(id).checked = false;
+        }
+        document.getElementById(checkbox_id).checked = true;
+    }
+}
+
+function apply_geometry_checkboxes() {
+    for(var child of scene.children) {
+        if(document.getElementById(child.name + " checkbox") != null) {
+            if(child.type == "Mesh") {
+                var shown_opacity = parseFloat(document.getElementById("shown opacity text box").value);
+                var hidden_opacity = parseFloat(document.getElementById("hidden opacity text box").value);
+                var object_type_name = child.name.split(",");
+                if(object_type_name[0] == "FenestrationSurface:Detailed") {
+                    var object_index = object_index_by_name_and_type(object_type_name[1],"FenestrationSurface:Detailed");
+                    var surface_type_field = idf_array[object_index][2].toLowerCase();
+                    if(surface_type_field == "window" || surface_type_field == "glassdoor" || surface_type_field == "tubulardaylightdome" || surface_type_field == "tubulardaylightdiffuser") {
+                        shown_opacity = glass_opacity;
+                    }
+                }
+                
+                if(document.getElementById(child.name + " checkbox").checked) {
+                    child.material.opacity = shown_opacity;
+                } else {
+                    child.material.opacity = shown_opacity * hidden_opacity;
+                }
+            } 
+            /*
+            else if(child.type == "Line") {
+                if(document.getElementById("Wireframe checkbox").checked || document.getElementById(child.name + " checkbox").checked) {
+                    child.material.visible = true;
+                } else {
+                    child.material.visible = false;
+                }
+            }
+            */
+        }
+    }
+    
+    animate();
+}
+
+function check_uncheck_all(input) {
+    for(var child of scene.children) {
+        if(document.getElementById(child.name + " checkbox") != null) {
+            if(child.type == "Mesh") {
+                document.getElementById(child.name + " checkbox").checked = input;
+            }
+        }
+    }
+}
+
+function check_uncheck_selection(input) {
+    var applicable_checkbox_ids = [];
+    var field_index;
+    var match_entire_field_value_contents = document.getElementById('match field contents text box').value;
+    
+    if(document.getElementById('BuildingSurface:Detailed checkbox').checked) {
+        applicable_checkbox_ids.push(['BuildingSurface:Detailed']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('BuildingSurface:Detailed Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('BuildingSurface:Detailed Surface Type checkbox').checked) {
+            field_index = 2;
+        } else if(document.getElementById('BuildingSurface:Detailed Construction Name checkbox').checked) {
+            field_index = 3;
+        } else if(document.getElementById('BuildingSurface:Detailed Zone Name checkbox').checked) {
+            field_index = 4;
+        } else if(document.getElementById('BuildingSurface:Detailed Outside Boundary Condition checkbox').checked) {
+            field_index = 5;
+        } else if(document.getElementById('BuildingSurface:Detailed Outside Boundary Condition Object checkbox').checked) {
+            field_index = 6;
+        } else if(document.getElementById('BuildingSurface:Detailed Sun Exposure checkbox').checked) {
+            field_index = 7;
+        } else if(document.getElementById('BuildingSurface:Detailed Wind Exposure checkbox').checked) {
+            field_index = 8;
+        } else if(document.getElementById('BuildingSurface:Detailed View Factor to Ground checkbox').checked) {
+            field_index = 9;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['BuildingSurface:Detailed',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    if(document.getElementById('FenestrationSurface:Detailed checkbox').checked) {
+        applicable_checkbox_ids.push(['FenestrationSurface:Detailed']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('FenestrationSurface:Detailed Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('FenestrationSurface:Detailed Surface Type checkbox').checked) {
+            field_index = 2;
+        } else if(document.getElementById('FenestrationSurface:Detailed Construction Name checkbox').checked) {
+            field_index = 3;
+        } else if(document.getElementById('FenestrationSurface:Detailed Building Surface Name checkbox').checked) {
+            field_index = 4;
+        } else if(document.getElementById('FenestrationSurface:Detailed Outside Boundary Condition Object checkbox').checked) {
+            field_index = 5;
+        } else if(document.getElementById('FenestrationSurface:Detailed View Factor to Ground checkbox').checked) {
+            field_index = 6;
+        } else if(document.getElementById('FenestrationSurface:Detailed Frame and Divider Name checkbox').checked) {
+            field_index = 7;
+        } else if(document.getElementById('FenestrationSurface:Detailed Multiplier checkbox').checked) {
+            field_index = 8;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['FenestrationSurface:Detailed',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    if(document.getElementById('Shading:Site:Detailed checkbox').checked) {
+        applicable_checkbox_ids.push(['Shading:Site:Detailed']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('Shading:Site:Detailed Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('Shading:Site:Detailed Transmittance Schedule Name checkbox').checked) {
+            field_index = 2;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['Shading:Site:Detailed',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    if(document.getElementById('Shading:Building:Detailed checkbox').checked) {
+        applicable_checkbox_ids.push(['Shading:Building:Detailed']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('Shading:Building:Detailed Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('Shading:Building:Detailed Transmittance Schedule Name checkbox').checked) {
+            field_index = 2;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['Shading:Building:Detailed',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    if(document.getElementById('Shading:Zone:Detailed checkbox').checked) {
+        applicable_checkbox_ids.push(['Shading:Zone:Detailed']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('Shading:Zone:Detailed Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('Shading:Zone:Detailed Base Surface Name checkbox').checked) {
+            field_index = 2;
+        } else if(document.getElementById('Shading:Zone:Detailed Transmittance Schedule Name checkbox').checked) {
+            field_index = 3;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['Shading:Zone:Detailed',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    if(document.getElementById('Daylighting:ReferencePoint checkbox').checked) {
+        applicable_checkbox_ids.push(['Daylighting:ReferencePoint']);
+    } else {
+        field_index = -1;
+        if(document.getElementById('Daylighting:ReferencePoint Name checkbox').checked) {
+            field_index = 1;
+        } else if(document.getElementById('Daylighting:ReferencePoint Zone Name checkbox').checked) {
+            field_index = 2;
+        }
+        
+        if(field_index != -1 && match_entire_field_value_contents.length > 0) {
+            applicable_checkbox_ids.push(['Daylighting:ReferencePoint',match_entire_field_value_contents,field_index]);
+        }
+    }
+    
+    //check or uncheck applicable boxes
+    var object_indices;
+    for(var subarray of applicable_checkbox_ids) {
+        object_indices = object_indices_by_type(subarray[0]);
+        for(var object_index of object_indices) {
+            if(subarray.length == 1) {
+                document.getElementById(subarray[0] + ',' + idf_array[object_index][1] + ' checkbox').checked = input;
+            } else if(subarray.length == 3) {
+                if(subarray[1].toLowerCase() == idf_array[object_index][subarray[2]].toLowerCase()) {
+                    document.getElementById(subarray[0] + ',' + idf_array[object_index][1] + ' checkbox').checked = input;
+                }
+            }
+        }
+    }
+}
+
+
+//****************************************************
+//creates the entire scene
+//****************************************************
+//create a renderer and add it to the DOM exactly once
+var renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(width, height);
+var three_js_container = document.getElementById('canvas div'); //three.js canvas containing div
+three_js_container.appendChild(renderer.domElement);
+//create the scene
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(white_color); //set background color
+scene.add(new THREE.AxesHelper(axis_length)); //make the axes, (x,y,z) = (red,green,blue)
+
+//create a camera and add to the scene
+var camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 10000); //recommended values (fov, aspect, near, far) https://threejs.org/docs/#api/en/cameras/PerspectiveCamera
+//var camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 1, 1000); //recommended values (left,right,top, bottom,near,far) https://threejs.org/docs/#api/en/cameras/OrthographicCamera
+camera.up = new THREE.Vector3(0,0,1); //z-axis now points up
+camera.position.set(2.0*axis_length,0.5*axis_length,1.0*axis_length); //initial (x,y,z) position of camera
+scene.add(camera);
+
+//there is no Light in the scene because a light source will create shadows and shade surfaces, but I want solid color surfaces
+
+var controls = new THREE.OrbitControls(camera, renderer.domElement); //add OrbitControls so that we can pan around with the mouse.
+controls.addEventListener('change',animate); //use if there is no animation loop
+
+//reset div text
+document.getElementById("geometry error div").innerHTML = "";
+
+//check for geometric objects that aren't rendered
+var ignored_object_indices = [];
+for(var ignored_object_type_name of ignored_object_types) {
+    ignored_object_indices = ignored_object_indices.concat(object_indices_by_type(ignored_object_type_name));
+}
+if(ignored_object_indices.length > 0) {
+    document.getElementById("geometry error div").innerHTML += "You have unsupported geometric objects in your IDF. See the FAQ for what is not rendered.<br>";
+}
+
+//Building field that affects rotation of building
+var object_indices = object_indices_by_type("Building");
+if(object_indices.length == 0) {
+    document.getElementById("geometry error div").innerHTML += "Did not find a Building object, which is required.<br>";
+}
+var north_axis_field = '';
+if(object_indices.length > 0) { //in case the object doesn't exist
+    object_index = object_indices[0];
+    north_axis_field = idf_array[object_index][2]; //degrees from true North
+}
+if(north_axis_field == '') { //in case the field is blank
+    north_axis_field = 0; //default value
+}
+var north_axis_counterclockwise_angle = -north_axis_field; //field convention is clockwise, but math is counterclockwise
+
+//GlobalGeometryRules fields that affect coordinates and handedness
+var object_indices = object_indices_by_type("GlobalGeometryRules");
+if(object_indices.length == 0) {
+    document.getElementById("geometry error div").innerHTML += "Did not find a GlobalGeometryRules object, which is required.<br>";
+}
+var vertex_entry_position;
+var vertex_coordinate_system;
+var daylighting_reference_point_coordinate_system;
+if(object_indices.length > 0) { //in case the object doesn't exist
+    object_index = object_indices[0];
+    vertex_entry_position = idf_array[object_index][2]; //Counterclockwise or Clockwise
+    vertex_coordinate_system = idf_array[object_index][3]; //Relative or World
+    daylighting_reference_point_coordinate_system = idf_array[object_index][4]; //Relative or World
+}
+//geometry debugging output for user
+if(vertex_entry_position == undefined || vertex_coordinate_system == undefined) {
+    document.getElementById("geometry error div").innerHTML += "GlobalGeometryRules object is malformed.<br>";
+}
+//case insensitive
+if(vertex_entry_position.toLowerCase() == 'Counterclockwise'.toLowerCase()) {
+    vertex_entry_position = 'Counterclockwise';
+} else if(vertex_entry_position.toLowerCase() == 'Clockwise'.toLowerCase()) {
+    vertex_entry_position = 'Clockwise';
+}
+//case insensitive
+if(vertex_coordinate_system.toLowerCase() == 'Relative'.toLowerCase()) {
+    vertex_entry_position = 'Relative';
+} else if(vertex_coordinate_system.toLowerCase() == 'World'.toLowerCase()) {
+    vertex_coordinate_system = 'World';
+}
+//case insensitive or default
+if(daylighting_reference_point_coordinate_system == undefined || daylighting_reference_point_coordinate_system == '') { //in case the field is blank
+    daylighting_reference_point_coordinate_system = 'Relative'; //default value
+} else if(daylighting_reference_point_coordinate_system.toLowerCase() == 'Relative'.toLowerCase()) {
+    daylighting_reference_point_coordinate_system = 'Relative';
+} else if(daylighting_reference_point_coordinate_system.toLowerCase() == 'World'.toLowerCase()) {
+    daylighting_reference_point_coordinate_system = 'World';
+}
+
+//draw North direction arrow
+var north_arrow = new THREE.ArrowHelper( xy_rotate_Vector3(new THREE.Vector3(0,1,0),north_axis_counterclockwise_angle), xy_rotate_Vector3(new THREE.Vector3(0,1.1*axis_length,0),north_axis_counterclockwise_angle), 0.1*axis_length, 0xff0000 , 3, 3 );
+scene.add(north_arrow);
+
+//get the index of every surface object that will be displayed in the scene
+var geometry_object_indices = [];
+var geometry_object_types = ["BuildingSurface:Detailed","Shading:Site:Detailed","Shading:Building:Detailed","Shading:Zone:Detailed"];
+for(object_type of geometry_object_types) {
+    geometry_object_indices = geometry_object_indices.concat(object_indices_by_type(object_type)); //get indices of all geometry_object_types
+}
+
+var hole_vertices_from_fenestraion = []; //used later to makes holes in the BuildingSurface:Detailed objects
+var object_type = "FenestrationSurface:Detailed";
+var fenestration_object_indices = object_indices_by_type(object_type); //get indices of all windows and doors
+for(var object_index of fenestration_object_indices) { //go through all the objects to be rendered, 'of' makes object_index the values in the geometry_object_indices array, NOT stepping through indices 0,1,2,...,geometry_object_indices.length - 1
+    //has an intermediate step to find the base surface
+    var base_surface_name = idf_array[object_index][4];
+    var building_surface_index = object_index_by_name_and_type(base_surface_name,"BuildingSurface:Detailed");
+    var zone_name = idf_array[building_surface_index][4];
+    var zone_object_index = object_index_by_name_and_type(zone_name,"Zone");
+    
+    var origin_translation; //get the xyz translation applied to the surface
+    if(vertex_coordinate_system == "Relative") { //the Zone origin fields will shift the surface vertices 
+        var zone_x = idf_array[zone_object_index][3];
+        var zone_y = idf_array[zone_object_index][4];
+        var zone_z = idf_array[zone_object_index][5];
+        if(zone_x == undefined || zone_x == '') { //field is blank
+            zone_x = '0' //default
+        }
+        if(zone_y == undefined || zone_y == '') { //field is blank
+            zone_y = '0' //default
+        }
+        if(zone_z == undefined || zone_z == '') { //field is blank
+            zone_z = '0' //default
+        }
+        zone_x = parseFloat(zone_x);
+        zone_y = parseFloat(zone_y);
+        zone_z = parseFloat(zone_z);
+        origin_translation = new THREE.Vector3(zone_x,zone_y,zone_z);
+    } else if(vertex_coordinate_system == "World") {
+        origin_translation = new THREE.Vector3(0,0,0);
+    }
+    
+    //the rotation of the zone relative to the y-axis is specified in the Zone object in either case
+    var surface_rotation = idf_array[zone_object_index][2];
+    if(surface_rotation == undefined || surface_rotation == '') { //field is blank
+        surface_rotation = '0' //default
+    }
+    var surface_rotation_counterclockwise_angle = parseFloat(surface_rotation);
+    
+    start_index = 10; //Vertex 1 X-coordinate
+    
+    var vertex_array = []; //will hold all the Vector3 surfaces vertices for this iteration
+    for(var field = start_index; field < idf_array[object_index].length; field+=3) { //vertices start at a different index depending on the object
+        if(idf_array[object_index][field] == '') { //keep grabbing vertices until there aren't any left 
+            break;
+        }
+        var vertex_x = parseFloat(idf_array[object_index][field]);
+        var vertex_y = parseFloat(idf_array[object_index][field+1]);
+        var vertex_z = parseFloat(idf_array[object_index][field+2]);
+        var vertex = new THREE.Vector3(vertex_x,vertex_y,vertex_z);
+        
+        vertex = xy_rotate_Vector3(vertex,surface_rotation_counterclockwise_angle);
+        vertex.add(origin_translation);
+        
+        vertex_array.push(vertex); //add the vertex to the vertex_array
+    }
+    //add base_surface_name and fenestration vertex_array
+    var vertex_array_deep_copy = [];
+    for(var i in vertex_array) {
+        vertex_array_deep_copy[i] = new THREE.Vector3().copy(vertex_array[i]);
+    }
+    hole_vertices_from_fenestraion.push([base_surface_name,vertex_array_deep_copy]);
+    
+    var surface_type = idf_array[object_index][2];
+    var front_color;
+    var back_color;
+    var surface_opacity;
+    if(surface_type.toLowerCase() == 'Door'.toLowerCase()) {
+        front_color = new THREE.Color(door_exterior_color);
+        back_color = new THREE.Color(door_interior_color);
+        surface_opacity = 1.0;
+    } else { //surface_type = Window, GlassDoor, TubularDaylightDome, TubularDaylightDiffuser
+        front_color = new THREE.Color(window_exterior_color);
+        back_color = new THREE.Color(window_interior_color);
+        surface_opacity = glass_opacity;
+    }
+    
+    //make the outline of the surface for the wireframe, wireframe will show problems with non-planar vertices for surfaces
+    var material = new THREE.LineBasicMaterial();
+    material.color = new THREE.Color(black_color);
+    material.visible = true;
+    var points = vertex_array.concat(vertex_array[0]); //to connect the last and first vertex by a line
+    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var line = new THREE.Line(geometry,material);
+    line.name = object_type + ',' + idf_array[object_index][1];
+    scene.add(line);
+
+    //find the centroid
+    var centroid = new THREE.Vector3(0,0,0);
+    for(var vertex of vertex_array) { //sum all vertices
+        centroid.add(vertex);
+    }
+    centroid.multiplyScalar(1.0/vertex_array.length); //find the centroid by dividing the current sum of all vertices by the number of vertices
+    
+    for(var i in vertex_array) {
+        vertex_array[i].sub(centroid); //move the centroid of the surface to the origin
+    }
+    
+    //create surface normal for future rotations
+    var surface_normal = new THREE.Vector3();
+    var rotation_angle;
+    var rotation_vector = new THREE.Vector3();
+    var z_axis_vector = new THREE.Vector3(0,0,1);
+    
+    surface_normal.crossVectors( new THREE.Vector3().subVectors(vertex_array[0],vertex_array[1]) , new THREE.Vector3().subVectors(vertex_array[0],vertex_array[2]) ); //takes into account handedness of vertices
+    surface_normal.normalize(); //must be a unit vector to use as input to other functions
+    rotation_angle = surface_normal.angleTo(z_axis_vector); //calculate angle between z-axis and surface normal, could be 0 or -pi which causes the rotation vector = (0,0,0)
+    rotation_vector.crossVectors(surface_normal,z_axis_vector); //vector perpindicular to z-axis and surface normal to rotate around
+    
+    rotation_vector.normalize(); //must be a unit vector to use as input to other functions
+    
+    if(rotation_vector.length() == 0) { //there is a possibilty that the surface normal is (0,0,1) or (0,0,-1), which makes the rotation vector = (0,0,0)
+        rotation_vector = new THREE.Vector3(1,0,0); //need to explicitly specify the rotation vector as a unit vector in the xy-plane, just picked the x-axis in this case
+    }
+    for(var i in vertex_array) {
+        vertex_array[i].applyAxisAngle(rotation_vector,rotation_angle); //rotation into xy-plane while keeping vertices handedness consistent
+    }
+    
+    //surfaces must be specifed in the xy-plane, then transformed to where they are supposed to be, this ensures the surfaces are planar for three.js
+    var xy_vertex_array = []; //holds vertices not that the surface lies in the xy-plane
+    for(var vertex of vertex_array) {
+        xy_vertex_array.push( new THREE.Vector2(vertex.x,vertex.y)); //take the x,y coordinates out of the Vector3 vertices, the z components should all be 0 if the surface vertices were coplanar
+    }
+    //part of the process for creating the surface
+    var building_surface;
+    building_surface = new THREE.Shape(xy_vertex_array);
+    geometry = new THREE.ShapeGeometry(building_surface);
+    geometry = new THREE.BufferGeometry().fromGeometry(geometry); //faster rendering
+    
+    //have to create two MeshBasicMaterial objects for different colors, which makes two separate surfaces
+    var mesh;
+    var unit_centroid;
+    material = new THREE.MeshBasicMaterial();
+    material.color = front_color;
+    material.side = THREE.FrontSide;
+    material.transparent = true;
+    material.opacity = surface_opacity;
+    mesh = new THREE.Mesh( geometry, material );
+    unit_centroid = centroid.clone();
+    unit_centroid.normalize();
+    mesh.translateOnAxis(unit_centroid,centroid.length());
+    mesh.rotateOnAxis( rotation_vector, -rotation_angle );
+    mesh.name = object_type + ',' + idf_array[object_index][1];
+    scene.add( mesh );
+    //back side surface
+    material = new THREE.MeshBasicMaterial();
+    material.color = back_color;
+    material.side = THREE.BackSide;
+    material.transparent = true;
+    material.opacity = surface_opacity;
+    mesh = new THREE.Mesh( geometry, material );
+    unit_centroid = centroid.clone();
+    unit_centroid.normalize();
+    mesh.translateOnAxis(unit_centroid,centroid.length());
+    mesh.rotateOnAxis( rotation_vector, -rotation_angle );
+    mesh.name = object_type + ',' + idf_array[object_index][1];
+    scene.add( mesh );
+}
+
+//render all of these objects
+for(var object_index of geometry_object_indices) { //go through all the objects to be rendered, 'of' makes object_index the values in the geometry_object_indices array, NOT stepping through indices 0,1,2,...,geometry_object_indices.length - 1
+    var object_type = idf_array[object_index][0]; //different objects have different rules to render them
+    
+    //get the rotation in the xy-plane and xyz translation applied to the surface
+    var surface_rotation_counterclockwise_angle;
+    var origin_translation;
+    if(object_type == "BuildingSurface:Detailed" || object_type == "Shading:Zone:Detailed") {
+        var zone_name;
+        if(object_type == "BuildingSurface:Detailed") {
+            zone_name = idf_array[object_index][4];
+        } else if(object_type == "Shading:Zone:Detailed") { //has an intermediate step to find the base surface
+            var base_surface_name = idf_array[object_index][2];
+            var building_surface_index = object_index_by_name_and_type(base_surface_name,"BuildingSurface:Detailed");
+            zone_name = idf_array[building_surface_index][4];
+        }
+        var zone_object_index = object_index_by_name_and_type(zone_name,"Zone");
+        
+        if(vertex_coordinate_system == "Relative") { //the Zone origin fields will shift the surface vertices 
+            var zone_x = idf_array[zone_object_index][3];
+            var zone_y = idf_array[zone_object_index][4];
+            var zone_z = idf_array[zone_object_index][5];
+            if(zone_x == undefined || zone_x == '') { //field is blank
+                zone_x = '0' //default
+            }
+            if(zone_y == undefined || zone_y == '') { //field is blank
+                zone_y = '0' //default
+            }
+            if(zone_z == undefined || zone_z == '') { //field is blank
+                zone_z = '0' //default
+            }
+            zone_x = parseFloat(zone_x);
+            zone_y = parseFloat(zone_y);
+            zone_z = parseFloat(zone_z);
+            origin_translation = new THREE.Vector3(zone_x,zone_y,zone_z);
+        } else if(vertex_coordinate_system == "World") {
+            origin_translation = new THREE.Vector3(0,0,0);
+        }
+        
+        //the rotation of the zone relative to the y-axis is specified in the Zone object in either case
+        var surface_rotation = idf_array[zone_object_index][2];
+        if(surface_rotation == undefined || surface_rotation == '') { //field is blank
+            surface_rotation = '0' //default
+        }
+        surface_rotation_counterclockwise_angle = -parseFloat(surface_rotation);
+    } else if(object_type == "Shading:Site:Detailed") {
+        origin_translation = new THREE.Vector3(0,0,0); //no setting translates the Shading:Site:* objects
+        
+        if(vertex_coordinate_system == "Relative") {
+            surface_rotation = north_axis_counterclockwise_angle;
+        } else if(vertex_coordinate_system == "World") {
+            surface_rotation = 0;
+        }
+    } else if(object_type == "Shading:Building:Detailed") {
+        origin_translation = new THREE.Vector3(0,0,0); //no setting translates the Shading:Building:* objects
+        surface_rotation = 0; //no setting rotates the Shading:Building:* objects
+    }
+    
+    var start_index; //the index in the object when the list of coordinates starts
+    //get the vertex list start_index for the surface
+    if(object_type == "BuildingSurface:Detailed") {
+        start_index = 11; //Vertex 1 X-coordinate
+    } else if(object_type == "Shading:Site:Detailed" || object_type == "Shading:Building:Detailed") {
+        start_index = 4; //Vertex 1 X-coordinate
+    } else if(object_type == "Shading:Zone:Detailed") {
+        start_index = 5; //Vertex 1 X-coordinate
+    }
+    
+    var vertex_array = []; //will hold all the Vector3 surfaces vertices for this iteration
+    for(var field = start_index; field < idf_array[object_index].length; field+=3) { //vertices start at a different index depending on the object
+        if(idf_array[object_index][field] == '') { //keep grabbing vertices until there aren't any left 
+            break;
+        }
+        var vertex_x = parseFloat(idf_array[object_index][field]);
+        var vertex_y = parseFloat(idf_array[object_index][field+1]);
+        var vertex_z = parseFloat(idf_array[object_index][field+2]);
+        var vertex = new THREE.Vector3(vertex_x,vertex_y,vertex_z);
+        
+        vertex = xy_rotate_Vector3(vertex,surface_rotation_counterclockwise_angle);
+        vertex.add(origin_translation);
+        
+        vertex_array.push(vertex); //add the vertex to the vertex_array
+    }
+    
+    var holes_vertices_arrays = []; //for all the fenestration objects in the surface
+    if(object_type == "BuildingSurface:Detailed") {
+        for(var subarray_index in hole_vertices_from_fenestraion) {
+            if(hole_vertices_from_fenestraion[subarray_index][0] == idf_array[object_index][1]) { //does the hole go with this surface
+                holes_vertices_arrays.push(hole_vertices_from_fenestraion[subarray_index][1]);
+            }
+        }
+    }
+    
+    //color the front and back of the surface different colors based on the surface type
+    var front_color, back_color;
+    if(object_type == "BuildingSurface:Detailed") {
+        if(idf_array[object_index][2].toLowerCase() == "floor") {
+            front_color = new THREE.Color(floor_exterior_color);
+            back_color = new THREE.Color(floor_interior_color);
+        } else if(idf_array[object_index][2].toLowerCase() == "wall") {
+            front_color = new THREE.Color(wall_exterior_color);
+            back_color = new THREE.Color(wall_interior_color);
+        } else if(idf_array[object_index][2].toLowerCase() == "ceiling" || idf_array[object_index][2].toLowerCase() == "roof") {
+            front_color = new THREE.Color(ceiling_roof_exterior_color);
+            back_color = new THREE.Color(ceiling_roof_interior_color);
+        }
+    } else if(object_type == "Shading:Site:Detailed") {
+        front_color = new THREE.Color(shading_site_exterior_color);
+        back_color = new THREE.Color(shading_site_interior_color);
+    } else if(object_type == "Shading:Building:Detailed") {
+        front_color = new THREE.Color(shading_building_exterior_color);
+        back_color = new THREE.Color(shading_building_interior_color);
+    } else if(object_type == "Shading:Zone:Detailed") {
+        front_color = new THREE.Color(shading_zone_exterior_color);
+        back_color = new THREE.Color(shading_zone_interior_color);
+    }
+    
+    //make the outline of the surface for the wireframe, wireframe will show problems with non-planar vertices for surfaces
+    var material = new THREE.LineBasicMaterial();
+    material.color = new THREE.Color(black_color);
+    material.visible = true;
+    var points = vertex_array.concat(vertex_array[0]); //to connect the last and first vertex by a line
+    var geometry = new THREE.BufferGeometry().setFromPoints(points);
+    var line = new THREE.Line(geometry,material);
+    line.name = object_type + ',' + idf_array[object_index][1];
+    scene.add(line);
+    
+    //find the centroid
+    var centroid = new THREE.Vector3(0,0,0);
+    for(var vertex of vertex_array) { //sum all vertices
+        centroid.add(vertex);
+    }
+    centroid.multiplyScalar(1.0/vertex_array.length); //find the centroid by dividing the current sum of all vertices by the number of vertices
+    
+    for(var i in vertex_array) {
+        vertex_array[i].sub(centroid); //move the centroid of the surface to the origin
+    }
+    for(var subarray_index in holes_vertices_arrays) {
+        for(var i in holes_vertices_arrays[subarray_index]) {
+            holes_vertices_arrays[subarray_index][i].sub(centroid);
+        }
+    }
+    
+    //create surface normal for future rotations
+    var surface_normal = new THREE.Vector3();
+    var rotation_angle;
+    var rotation_vector = new THREE.Vector3();
+    var z_axis_vector = new THREE.Vector3(0,0,1);
+    
+    surface_normal.crossVectors( new THREE.Vector3().subVectors(vertex_array[0],vertex_array[1]) , new THREE.Vector3().subVectors(vertex_array[0],vertex_array[2]) ); //takes into account handedness of vertices
+    surface_normal.normalize(); //must be a unit vector to use as input to other functions
+    rotation_angle = surface_normal.angleTo(z_axis_vector); //calculate angle between z-axis and surface normal, could be 0 or -pi which causes the rotation vector = (0,0,0)
+    rotation_vector.crossVectors(surface_normal,z_axis_vector); //vector perpindicular to z-axis and surface normal to rotate around
+    
+    rotation_vector.normalize(); //must be a unit vector to use as input to other functions
+    
+    if(rotation_vector.length() == 0) { //there is a possibilty that the surface normal is (0,0,1) or (0,0,-1), which makes the rotation vector = (0,0,0)
+        rotation_vector = new THREE.Vector3(1,0,0); //need to explicitly specify the rotation vector as a unit vector in the xy-plane, just picked the x-axis in this case
+    }
+    for(var i in vertex_array) {
+        vertex_array[i].applyAxisAngle(rotation_vector,rotation_angle); //rotation into xy-plane while keeping vertices handedness consistent
+    }
+    for(var subarray_index in holes_vertices_arrays) {
+        for(var i in holes_vertices_arrays[subarray_index]) {
+            holes_vertices_arrays[subarray_index][i].applyAxisAngle(rotation_vector,rotation_angle);
+        }
+    }
+    
+    //surfaces must be specifed in the xy-plane, then transformed to where they are supposed to be, this ensures the surfaces are planar for three.js
+    var xy_vertex_array = []; //holds vertices not that the surface lies in the xy-plane
+    for(var vertex of vertex_array) {
+        xy_vertex_array.push( new THREE.Vector2(vertex.x,vertex.y)); //take the x,y coordinates out of the Vector3 vertices, the z components should all be 0 if the surface vertices were coplanar
+    }
+    var xy_holes_paths = [];
+    for(var subarray of holes_vertices_arrays) {
+        var hole_vector2_array = [];
+        for(var i in subarray) {
+            hole_vector2_array.push(new THREE.Vector2(subarray[i].x,subarray[i].y));
+        }
+        hole_vector2_array.push(hole_vector2_array[0]);
+        xy_holes_paths.push(new THREE.Path().setFromPoints(hole_vector2_array));
+    }
+
+    //part of the process for creating the surface
+    var building_surface;
+    building_surface = new THREE.Shape(xy_vertex_array);
+    building_surface.holes = xy_holes_paths;
+    geometry = new THREE.ShapeGeometry(building_surface);
+    geometry = new THREE.BufferGeometry().fromGeometry(geometry); //faster rendering
+
+    //have to create two MeshBasicMaterial objects for different colors, which makes two separate surfaces
+    var mesh;
+    var unit_centroid;
+    material = new THREE.MeshBasicMaterial();
+    material.color = front_color;
+    material.side = THREE.FrontSide;
+    material.transparent = true;
+    material.opacity = 1.00;
+    mesh = new THREE.Mesh( geometry, material );
+    unit_centroid = centroid.clone();
+    unit_centroid.normalize();
+    mesh.translateOnAxis(unit_centroid,centroid.length()); //coordinate system moves with surface
+    mesh.rotateOnAxis( rotation_vector, -rotation_angle );
+    mesh.translateOnAxis(surface_normal,0.001); //so the surfaces aren't exactly in the same plane as another surface
+    mesh.name = object_type + ',' + idf_array[object_index][1];
+    scene.add( mesh );
+    //back side surface
+    if(object_type != "BuildingSurface:Detailed" || (object_type == "BuildingSurface:Detailed" && idf_array[object_index][5].toLowerCase() != "Surface".toLowerCase())) { //surfaces that don't need a back side because they're paired with another surface
+        material = new THREE.MeshBasicMaterial();
+        material.color = back_color;
+        material.side = THREE.BackSide;
+        material.transparent = true;
+        material.opacity = 1.00;
+        mesh = new THREE.Mesh( geometry, material );
+        unit_centroid = centroid.clone();
+        unit_centroid.normalize();
+        mesh.translateOnAxis(unit_centroid,centroid.length());
+        mesh.rotateOnAxis( rotation_vector, -rotation_angle );
+        mesh.translateOnAxis(surface_normal,0.001);
+        mesh.name = object_type + ',' + idf_array[object_index][1];
+        scene.add( mesh );
+    }
+}
+
+daylight_sensor_object_indices = object_indices_by_type("Daylighting:ReferencePoint"); //get indices of all daylighting sensor coordinates
+for(var object_index of daylight_sensor_object_indices) { 
+    var vertex_x = parseFloat(idf_array[object_index][3]);
+    var vertex_y = parseFloat(idf_array[object_index][4]);
+    var vertex_z = idf_array[object_index][5];
+    if(vertex_z == undefined || vertex_z == '') { //field is blank
+        vertex_z = '0.8' //default
+    }
+    vertex_z = parseFloat(vertex_z);
+    
+    var sensor_vector3 = new THREE.Vector3(vertex_x,vertex_y,vertex_z);
+    
+    var zone_name = idf_array[object_index][2];
+    var zone_object_index = object_index_by_name_and_type(zone_name,"Zone");
+    
+    //get the rotation in the xy-plane and xyz translation applied to the surface
+    var origin_translation;
+    if(daylighting_reference_point_coordinate_system == "Relative") { //the Zone origin fields will shift the surface vertices 
+        var zone_x = idf_array[zone_object_index][3];
+        var zone_y = idf_array[zone_object_index][4];
+        var zone_z = idf_array[zone_object_index][5];
+        if(zone_x == undefined || zone_x == '') { //field is blank
+            zone_x = '0' //default
+        }
+        if(zone_y == undefined || zone_y == '') { //field is blank
+            zone_y = '0' //default
+        }
+        if(zone_z == undefined || zone_z == '') { //field is blank
+            zone_z = '0' //default
+        }
+        zone_x = parseFloat(zone_x);
+        zone_y = parseFloat(zone_y);
+        zone_z = parseFloat(zone_z);
+        origin_translation = new THREE.Vector3(zone_x,zone_y,zone_z);
+    } else if(daylighting_reference_point_coordinate_system == "World") {
+        origin_translation = new THREE.Vector3(0,0,0);
+    }
+    
+    //the rotation of the zone relative to the y-axis is specified in the Zone object in either case
+    var zone_angle = idf_array[zone_object_index][2];
+    if(zone_angle == undefined || zone_angle == '') { //field is blank
+        zone_angle = '0' //default
+    }
+    var z_axis_counterclockwise_rotation = -parseFloat(zone_angle);
+    
+    sensor_vector3.add(origin_translation);
+    
+    geometry = new THREE.SphereGeometry( 0.5, 32, 32 );
+    geometry = new THREE.BufferGeometry().fromGeometry(geometry); //faster rendering
+    geometry.rotateZ(z_axis_counterclockwise_rotation);
+    geometry.translate(sensor_vector3.x,sensor_vector3.y,sensor_vector3.z);
+    material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+    material.transparent = true;
+    material.opacity = 1.00;
+    var sphere = new THREE.Mesh( geometry, material );
+    sphere.name = object_type + ',' + idf_array[object_index][1];
+    scene.add( sphere );
+}
+
+
+//does the initial setup for handling resizing the browser window area and animating the three.js scence
+resize();
+animate();
+window.addEventListener('resize',resize);
+</script>
+
+</body>
+</html>
