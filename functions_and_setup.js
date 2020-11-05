@@ -929,9 +929,9 @@ function resize(){ //when the browser window changes
 }
 function animate() { //renders the scene
     renderer.render(scene,camera);
-    controls.update();
+    //controls.update();
     
-    requestAnimationFrame(animate);
+    //requestAnimationFrame(animate);
 }
 
 //takes a Vector3 and returns the vector rotated about the z-axis by argument degrees counterclockwise
