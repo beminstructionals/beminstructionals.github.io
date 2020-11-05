@@ -390,7 +390,7 @@ scene.add(camera);
 //there is no Light in the scene because a light source will create shadows and shade surfaces, but I want solid color surfaces
 
 var controls = new THREE.OrbitControls(camera, renderer.domElement); //add OrbitControls so that we can pan around with the mouse.
-controls.addEventListener('change',animate); //use if there is no animation loop
+//controls.addEventListener('change',animate); //use if there is no animation loop
 
 //reset div text
 document.getElementById("geometry error div").innerHTML = "";
