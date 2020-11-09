@@ -137,6 +137,7 @@ function set_object_type_count(object_type) {
     } else if(count < 1000) {
         count_div.innerHTML = '[0' + count.toString() + '] ' + object_type.toString();
     } else {
+        console.log(object_type);
         count_div.innerHTML = '[' + count.toString() + '] ' + object_type.toString();
     }
 }
