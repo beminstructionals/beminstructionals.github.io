@@ -60,10 +60,10 @@ Upload IDF: <input type="file" accept=".idf" onchange="process_uploaded_file(thi
         <div id="Documentation IDD div" style="float:right; height:100%; width:74%; overflow-y: scroll;  display: block;"></div>
         <iframe id="Documentation IO Ref iframe" src="InputOutputReference.pdf#view=FitH" style="float:right; height:100%; width:74%; display: none;"></iframe>
     </div>
+    
+    <div id="IDF table div" style="overflow: scroll; width: 100%; height: 0vh;"></div> <!--height set from URL parameters-->
 </div>
 
-<div id="IDF table div" style="overflow: scroll; width: 100%; height: 0vh;"></div> <!--height set from URL parameters-->
-    
 <div id="find replace div" style="position: absolute; left: 10%; top: 10%; width: 80%; height: 80%; z-index: 1; background-color: white; border: 1px solid black; display: none; overflow-y: scroll;">
     <input type="text" id="find_input" placeholder="Find Text" style="width:50%">
     <button onclick="find_button()">Find</button>
