@@ -58,6 +58,7 @@ function process_uploaded_file(input) {
         
         //initializes all the object counts in object_count_json and the class list
         update_object_type_counts();
+        populate_table(currently_highligted_object_type);
     };
 
     reader.onerror = function() {
