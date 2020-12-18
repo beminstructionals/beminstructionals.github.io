@@ -579,10 +579,7 @@ function replace_button() {
         var field_index;
         var checkbox_id;
         var regex_object;
-        console.log(find_table_checkboxes.length);
         for(var i = 0; i < find_table_checkboxes.length; i++) { //go through all the checkboxes
-            console.log(i)
-            console.log(find_table_checkboxes[i].checked)
             if(find_table_checkboxes[i].checked) { //checkbox is checked
                 //id = find_select_checkbox_ object_index _ field_index
                 checkbox_id = find_table_checkboxes[i].id;
@@ -590,9 +587,7 @@ function replace_button() {
                 object_index = checkbox_id[checkbox_id.length-2];
                 field_index = checkbox_id[checkbox_id.length-1];
                 regex_object = new RegExp(find_string,"gi");
-                console.log(idf_array[object_index][field_index]);
                 idf_array[object_index][field_index] = idf_array[object_index][field_index].replace(regex_object,replace_string); //global, case-insensitive replacement
-                console.log(idf_array[object_index][field_index]);
             }
         }
         find_button(); //regenrate the find table
