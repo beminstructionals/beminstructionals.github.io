@@ -579,7 +579,10 @@ function replace_button() {
         var field_index;
         var checkbox_id;
         var regex_object;
+        console.log(find_table_checkboxes.length);
         for(var i = 0; i < find_table_checkboxes.length; i++) { //go through all the checkboxes
+            console.log(i)
+            console.log(find_table_checkboxes[i].checked)
             if(find_table_checkboxes[i].checked) { //checkbox is checked
                 //id = find_select_checkbox_ object_index _ field_index
                 checkbox_id = find_table_checkboxes[i].id;
