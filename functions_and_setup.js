@@ -587,7 +587,9 @@ function replace_button() {
                 object_index = checkbox_id[checkbox_id.length-2];
                 field_index = checkbox_id[checkbox_id.length-1];
                 regex_object = new RegExp(find_string,"gi");
+                console.log(idf_array[object_index][field_index]);
                 idf_array[object_index][field_index] = idf_array[object_index][field_index].replace(regex_object,replace_string); //global, case-insensitive replacement
+                console.log(idf_array[object_index][field_index]);
             }
         }
         find_button(); //regenrate the find table
