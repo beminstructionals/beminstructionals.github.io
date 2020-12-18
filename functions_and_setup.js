@@ -745,7 +745,6 @@ function idf_array_changing(alteration) {
     idf_array_note = alteration;
     idf_array = deep_copy;
     enable_disable_undo_redo_buttons();
-    find_button();
 }
 
 function goto_button(object_index,field_index) {
