@@ -19,10 +19,10 @@ function ShowPage(page_index) {
 }
 
 function open_geometry_tab() {
-    sessionStorage.clear();
-    sessionStorage.setItem("geometry_vw", geometry_vw);
-    sessionStorage.setItem("geometry_vh", geometry_vh);
-    sessionStorage.setItem("idf_array", JSON.stringify(idf_array));
+    localStorage.clear();
+    localStorage.setItem("geometry_vw", geometry_vw);
+    localStorage.setItem("geometry_vh", geometry_vh);
+    localStorage.setItem("idf_array", JSON.stringify(idf_array));
     window.open("https://beminstructionals.wiki/geometry_viewer.html","IDF Geometry Viewer");
 }
 
