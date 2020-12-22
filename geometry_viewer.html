@@ -65,13 +65,12 @@
 </div>
 
 <script>
-var geometry_vw = sessionStorage.getItem("geometry_vw");
-var geometry_vh = sessionStorage.getItem("geometry_vh");
+var geometry_vw = localStorage.getItem("geometry_vw");
+var geometry_vh = localStorage.getItem("geometry_vh");
+var idf_array = JSON.parse(localStorage.getItem("idf_array"));
+
 document.getElementById('canvas div').style = "width: " + geometry_vw + "vw; height: " + geometry_vh + "vh; float: left;";
 document.getElementById('geometry controls div').style = "width: " + (100-1-geometry_vw) + "vw; height: " + geometry_vh + "vh; float: right; overflow-y: scroll; white-space: nowrap;";
-
-var idf_array = JSON.parse(sessionStorage.getItem("idf_array"));
-
 
 /*
 OBJECTS USED IN GEOMETRY
