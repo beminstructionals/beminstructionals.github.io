@@ -91,6 +91,7 @@ Upload IDF: <input type="file" accept=".idf" onchange="process_uploaded_file(thi
     <p><a href="https://www.youtube.com/watch?v=N1rTlM23mis" target="_blank"><b>Getting Started with EnergyPlus version 9.4</b></a> - Downloading, EP-Launch, IDF Editor, OpenStudio, Geometry viewer</p>
     <p><a href="https://www.youtube.com/watch?v=yS9UR_zXH-k" target="_blank"><b>How to use this Site Part 1 of 2</b></a> - All the buttons and features of the IDF Editor</p>
     <p><a href="https://www.youtube.com/watch?v=t9m0UC28M0E" target="_blank"><b>How to use this Site Part 2 of 2</b></a> - Using the Geometry Editor</p>
+    <p><a href="https://www.youtube.com/watch?v=V56m1AM4ek0" target="_blank"><b>EP-Launch, Simulation, and Output</b></a> - All the buttons and output files.</p>
 </div>
 
 <div id="Licenses Page div" style="display:none;">
@@ -159,6 +160,14 @@ Upload IDF: <input type="file" accept=".idf" onchange="process_uploaded_file(thi
     <h2>Why is the Geometry page not working correctly?</h2>
     <p>This is most likely due to a missing or malformed object in the IDF. Do you have exactly one <code>Building</code> object? Do you have exactly one <code>GlobalGeometryRules</code> object? Are your <code>Zone, ZoneList, BuildingSurface:Detailed, FenestrationSurface:Detailed</code>, et cetera objects formed correctly? Did you mistakently use a <code>Shading:Site:*</code> versus <code>Shading:Building:*</code> object, which use different coordinate systems? Are any of the points in your surfaces not coplanar with the other points? Are you using Relative or World coordinates? Do your <code>Zone</code> objects have the correct origin?</p>
     <p>A good way to find most of these errors is to simulate your IDF and look in the resulting *.ERR file, which is usually pretty good about pointing out missing or malformed objects. The *.ERR file might specify more <code>Output:*</code> objects to display more verbose output as well.</p>
+    
+    <h2>Why can't simulation occur in the browser?</h2>
+    <p>Running EnergyPlus version 9.4, and all versions, is not practical to run in a browser for a variety of reasons.<br>
+    1) The source code is written in C++, Fortran, Python, and maybe more.<br>
+    2) The installation file alone is quite large, around 80MB.<br>
+    3) The simulation is computationally and memory intensive, sometimes using an entire CPU and 4GB of RAM.<br>
+    4) Even if I had a server available on the internet to send the IDF, simulate, then send the output files back for viewing, the output variable and meter CSVs can be quite large.<br>
+    Sorry. Unless there is a major efficiency upgrade, simulation in the browser and viewing of output files is not practical.</p>
     
     <h2>Why on Earth did you make this?</h2>
     <p>The real reason was so the misses and I wouldn't figuratively murder each other while being couped up during the pandemic. I also enjoy teaching and remember how steep the learning curve for this stuff was, so making this site and the vidoes that go with it seemed like a good idea.</p>
