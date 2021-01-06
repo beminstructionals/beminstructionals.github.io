@@ -836,6 +836,8 @@ for(var object_index of geometry_object_indices) { //go through all the objects 
 
 daylight_sensor_object_indices = object_indices_by_type("Daylighting:ReferencePoint"); //get indices of all daylighting sensor coordinates
 for(var object_index of daylight_sensor_object_indices) { 
+    var object_type = "Daylighting:ReferencePoint"
+    
     var vertex_x = parseFloat(idf_array[object_index][3]);
     var vertex_y = parseFloat(idf_array[object_index][4]);
     var vertex_z = idf_array[object_index][5];
