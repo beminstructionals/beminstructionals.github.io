@@ -182,6 +182,7 @@ function geometry_checkbox(checkbox_id) {
 
 function apply_geometry_checkboxes() {
     for(var child of scene.children) {
+        console.log(child);
         if(document.getElementById(child.name + " checkbox") != null) {
             if(child.type == "Mesh") {
                 if(document.getElementById(child.name + " checkbox").checked) {
