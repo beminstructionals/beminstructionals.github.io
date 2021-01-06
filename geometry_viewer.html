@@ -884,7 +884,8 @@ for(var object_index of daylight_sensor_object_indices) {
     geometry = new THREE.BufferGeometry().fromGeometry(geometry); //faster rendering
     geometry.rotateZ(z_axis_counterclockwise_rotation);
     geometry.translate(sensor_vector3.x,sensor_vector3.y,sensor_vector3.z);
-    material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+    material = new THREE.MeshBasicMaterial();
+    material.color = new THREE.Color(0x0000ff);
     material.visible = true;
     var sphere = new THREE.Mesh( geometry, material );
     sphere.name = object_type + ',' + idf_array[object_index][1];
